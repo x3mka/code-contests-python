@@ -4,13 +4,11 @@ def ria(): return list(map(int, input().split()))
 def ia_to_s(a): return ' '.join([str(s) for s in a])
 
 
-from math import pi, sin, tan
+from math import pi, sin, cos
 
 
 def solve(n):
-    a1 = 1.0 / tan(pi / (2*n))
-    a2 = 1.0 / sin(pi / (2*n))
-    return max(a1, a2)
+    return cos(pi / (4*n)) / sin(pi / (2*n))
 
 
 def main():
