@@ -1,0 +1,6 @@
+- Solve the task for small numbers
+- d[i] definition in words
+- Build recurrent formula
+- Limitations for starting indices
+- Computation order (up, down, even/odd for 1-d, rows, cols, diagonals for 2-d, etc.)
+- Where is answer 

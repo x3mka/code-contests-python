@@ -1,5 +1,4 @@
 from nose.tools import *
-from lib.data_structures.segment_tree import *
 
 
 def test_build():

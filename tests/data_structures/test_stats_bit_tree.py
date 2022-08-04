@@ -1,5 +1,4 @@
 from nose.tools import *
-from lib.data_structures.stats_bit_tree import *
 
 
 def test_build():
