@@ -1,6 +1,4 @@
-import os
 import sys
-from io import BytesIO, IOBase
 def rs(): return sys.stdin.readline().rstrip()
 def ri(): return int(sys.stdin.readline())
 def ria(): return list(map(int, sys.stdin.readline().split()))
@@ -9,14 +7,63 @@ def wi(n): sys.stdout.write(str(n) + '\n')
 def wia(a): sys.stdout.write(' '.join([str(x) for x in a]) + '\n')
 
 
-def solve(n, k):
-    return 0
+def pref_sum_1d(a):
+    n = len(a)
+    b = [0] * (n+1)
+    for i in range(1, n+1):
+        b[i] = b[i-1] + a[i-1]
+    return b
+
+def diff_1d(a):
+    n = len(a)
+    diffs = [0] * (n-1)
+    for i in range(n-1):
+        diffs[i] = a[i+1] - a[i]
+    return diffs
+
+
+# [lx, rx) += d,   usually a if a diffs array here
+def add_in_range_1d(a, lx, rx, d):
+    n = len(a)
+    a[lx] += d
+    if rx < n:
+        a[rx] -= d
+
+
+# Solution for O(n): https://codeforces.com/blog/entry/88291?locale=ru
+# Editorial: https://codeforces.com/blog/entry/88248
+def solve(n, a):
+    ans = 0
+    c = [0] * (n + 1)
+    # diff = [0] * n
+
+    for i in range(n):
+        # c = pref_sum_1d(diff)
+        # c[i] = c[i-1] + diff[i] if i > 0 else 0
+        extra = max(0, a[i] - 1 - c[i])
+        ans += extra
+        c[i] = max(c[i], a[i] - 1)
+
+        # we make starting jumps to i+2, i+3, i+a[i], so should add +1 on range [i+2, i+a[i]+1)
+        for j in range(2, min(a[i]+1, n-i)):
+            c[i+j] += 1
+
+        c[i+1] += c[i] - a[i] + 1
+        # if i + 1 < n:
+        #     add_in_range_1d(diff, i+1, i+a[i], 1)
+
+    return ans
 
 
 def main():
     for _ in range(ri()):
-        n, k = ria()
-        print(solve(n, k))
+        n = ri()
+        a = ria()
+        wi(solve(n, a))
+
+
+import os
+from io import IOBase, BytesIO
 
 
 BUFSIZE = 8192
@@ -26,7 +73,6 @@ class FastIO(IOBase):
     newlines = 0
 
     def __init__(self, file):
-        self._file = file
         self._fd = file.fileno()
         self.buffer = BytesIO()
         self.writable = "x" in file.mode or "r" not in file.mode
@@ -67,10 +113,10 @@ class IOWrapper(IOBase):
         self.readline = lambda: self.buffer.readline().decode("ascii")
 
 
-sys.stdin, sys.stdout = IOWrapper(sys.stdin), IOWrapper(sys.stdout)
-input = lambda: sys.stdin.readline().rstrip("\r\n")
+# usage
+# sys.stdin, sys.stdout = IOWrapper(sys.stdin), IOWrapper(sys.stdout)
+# input = lambda: sys.stdin.readline().rstrip("\r\n")
 
-# endregion
-
-if __name__ == "__main__":
+if __name__ == '__main__':
+    sys.stdin, sys.stdout = IOWrapper(sys.stdin), IOWrapper(sys.stdout)
     main()

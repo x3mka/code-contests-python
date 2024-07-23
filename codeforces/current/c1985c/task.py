@@ -1,22 +1,52 @@
-import os
 import sys
-from io import BytesIO, IOBase
 def rs(): return sys.stdin.readline().rstrip()
 def ri(): return int(sys.stdin.readline())
 def ria(): return list(map(int, sys.stdin.readline().split()))
-def ws(s): sys.stdout.write(s + '\n')
-def wi(n): sys.stdout.write(str(n) + '\n')
-def wia(a): sys.stdout.write(' '.join([str(x) for x in a]) + '\n')
+def ws(s): sys.stdout.write(s); sys.stdout.write('\n')
+def wi(n): sys.stdout.write(str(n)); sys.stdout.write('\n')
+def wia(a, sep=' '): sys.stdout.write(sep.join([str(x) for x in a])); sys.stdout.write('\n')
 
 
-def solve(n, k):
-    return 0
+from random import randint
+
+RANDOM = randint(1, 10 ** 9)
+
+
+class Wrapper(int):
+    def __init__(self, x):
+        int.__init__(x)
+
+    def __hash__(self):
+        return super(Wrapper, self).__hash__() ^ RANDOM
+
+
+def solve(n, a):
+    ans = 0
+    cur = set()
+    s = 0
+    for i in range(n):
+        new_s = s + a[i]
+        if a[i] == s:
+            ans += 1
+        else:
+            # a[j] = new_s - a[j]  => 2 * a[j] = new_s
+            if new_s % 2 == 0 and Wrapper(new_s // 2) in cur:
+                ans += 1
+        cur.add(Wrapper(a[i]))
+        s = new_s
+
+    return ans
 
 
 def main():
     for _ in range(ri()):
-        n, k = ria()
-        print(solve(n, k))
+        n = ri()
+        a = ria()
+        wi(solve(n, a))
+
+
+import os
+from io import IOBase, BytesIO
 
 
 BUFSIZE = 8192
@@ -26,7 +56,6 @@ class FastIO(IOBase):
     newlines = 0
 
     def __init__(self, file):
-        self._file = file
         self._fd = file.fileno()
         self.buffer = BytesIO()
         self.writable = "x" in file.mode or "r" not in file.mode
@@ -67,10 +96,6 @@ class IOWrapper(IOBase):
         self.readline = lambda: self.buffer.readline().decode("ascii")
 
 
-sys.stdin, sys.stdout = IOWrapper(sys.stdin), IOWrapper(sys.stdout)
-input = lambda: sys.stdin.readline().rstrip("\r\n")
-
-# endregion
-
-if __name__ == "__main__":
+if __name__ == '__main__':
+    sys.stdin, sys.stdout = IOWrapper(sys.stdin), IOWrapper(sys.stdout)
     main()
